@@ -1,11 +1,9 @@
 <template>
   <header>
     <div class="wrapper">
-      <nav>
+      <router-link to="/">Dose Me 💊</router-link>
+      <nav v-if="$route.name !== 'home'">
         <menu>
-          <li class="nav__home">
-            <router-link to="/">Dose Me</router-link>
-          </li>
           <li class="nav__week">
             <router-link to="/week">Week</router-link>
           </li>
@@ -13,6 +11,9 @@
             <router-link :to="`/day/${name}`">
               {{ upperFirst(name) }}
             </router-link>
+          </li>
+          <li>
+            <a href="#" @click.prevent="user.logOut">Logout</a>
           </li>
         </menu>
       </nav>
@@ -22,11 +23,18 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import { upperFirst } from '@/helpers/strings'
 import { daysMonday } from '@/days'
+
+const user = useUserStore();
 </script>
 
 <style scoped>
+header {
+  background-color: var(--colour-ui);
+}
+
 nav {
   padding: 1rem;
 }
@@ -41,8 +49,10 @@ menu {
 
 li {}
 
-a:link {
-  text-decoration: none;
+a:link,
+a:visited {
+  color: var(--colour-back);
+    text-decoration: none;
 }
 
 .nav__week {

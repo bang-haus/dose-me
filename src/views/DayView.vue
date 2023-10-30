@@ -1,18 +1,15 @@
 <template>
   <div>
-    <h1>Day: {{ dayName }}</h1>
+    <h1>Day: {{ upperFirst(dayName) }}</h1>
     <router-view />
   </div>
 </template>
 
-<script>
-export default {
-  props: ['dayName']
-}
-</script>
-
 <script setup>
-
+import {upperFirst} from '@/helpers/strings'
+defineProps({
+  dayName: String
+});
 </script>
 
 <style lang="scss" scoped>

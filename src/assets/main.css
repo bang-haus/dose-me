@@ -24,3 +24,92 @@ a:visited {
 
 @media (min-width: 1024px) {
 }
+
+fieldset {
+  --columns: 1fr;
+  border: 1px dashed var(--colour-front);
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: var(--columns);
+  padding: 0.5rem;
+}
+
+fieldset:disabled {
+  border-style: double;
+}
+
+fieldset:disabled button:hover {
+  background: var(--colour-back);
+  color: var(--colour-ui);
+  cursor: progress;
+}
+
+legend {
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+label {
+  position: relative;
+}
+
+input {
+  border: 1px solid var(--colour-front);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.5rem;
+}
+
+input:focus {
+  border-color: var(--colour-ui);
+  outline: none;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  height: 0;
+  margin-right: 1rem;
+  width: 0;
+}
+
+input[type='checkbox']::after,
+input[type='radio']::after {
+  color: var(--colour-front);
+  content: '☐';
+  font-size: 1.5rem;
+  position: absolute;
+  top: 0.25rem;
+}
+
+input[type='checkbox']:checked::after,
+input[type='radio']:checked::after {
+  color: var(--colour-ui);
+  content: '☑︎';
+}
+
+button {
+  appearance: none;
+  background-color: var(--colour-back);
+  border: 2px solid;
+  border-image-slice: 1;
+  border-image-source: var(--gradient);
+  color: var(--colour-ui);
+  cursor: pointer;
+  font-family:var(--font-body);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.5rem 1rem;
+}
+
+button:hover {
+  background: var(--gradient);
+  color: var(--colour-back);
+}
+
+button + button {
+  --gradient: var(--gradient-s);
+  color: var(--colour-front);
+  margin-left: 0.25rem;
+}
