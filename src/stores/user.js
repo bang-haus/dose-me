@@ -42,25 +42,31 @@ export const useUserStore = defineStore('user', () => {
     try {
       await createUserWithEmailAndPassword(auth, values.email, values.password);
     } catch (error) {
-      console.log(error.message);
-      return { type: 'error', result: error };
+      console.log('register error');
+      alert.set('error', error.code);
+
+      return;
     }
 
-    console.log('tried');
-    return { type: 'success', result: loggedInUser };
+    alert('success', 'Successfully registered!');
   }
 
   async function authenticate(values) {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
     } catch (error) {
-      console.log(error.code, error.message);
+      console.log('authentication error');
+      alert.set('error', error.code);
+
+      return;
     }
+
+    alert.set('success', 'Successfully logged in!');
   }
 
   async function logOut() {
     await signOut(auth);
-    alert.set('success', 'Successfully logged out.')
+    alert.set('success', 'Successfully logged out!');
     router.push('/');
   }
 

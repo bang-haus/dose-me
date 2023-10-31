@@ -53,23 +53,19 @@
 
 <script setup>
 import { useUserStore } from '@/stores/user';
-import { useAlertStore } from '@/stores/alert';
 
 const user = useUserStore();
-const alert = useAlertStore();
 
 async function logIn(event) {
   const fieldset = event.target.querySelector('fieldset');
   fieldset.setAttribute('disabled', '');
 
-  const result = await user.authenticate({
+  await user.authenticate({
     email: event.target.elements.email.value,
     password: event.target.elements.password.value
   });
 
-  if (result.type === 'error') {
-    fieldset.removeAttribute('disabled');
-  }
+  fieldset.removeAttribute('disabled');
 }
 
 async function register(event) {
@@ -87,19 +83,12 @@ async function register(event) {
     const fieldset = event.target.querySelector('fieldset');
     fieldset.setAttribute('disabled', '');
 
-    const response = await user.register({
+    await user.register({
       email: email.value,
       password: password.value
     });
 
-    let message = 'Successfully registered!';
-
-    if (response.type === 'error') {
-      fieldset.removeAttribute('disabled');
-      message = response.result.message;
-    }
-
-    alert.set(response.type, message);
+    fieldset.removeAttribute('disabled');
   }
 }
 

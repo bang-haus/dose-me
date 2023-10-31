@@ -1,4 +1,5 @@
 @import './base.css';
+@import './utility.css';
 
 h1,
 h2,
@@ -116,7 +117,11 @@ button + button {
 
 .alert {
   bottom: 1rem;
+  display: flex;
+  gap: 1rem;
   margin: 0 0 0 auto;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  position: fixed;
   right: 1rem;
 }
 
@@ -128,4 +133,16 @@ button + button {
 .alert--success {
   background-color: var(--colour-success);
   color: var(--colour-back);
+}
+
+.alert button {
+  border: 0;
+  background-color: transparent;
+  color: var(--colour-back);
+  padding: 0;
+}
+
+.alert button:hover {
+  background: transparent;
+  color: var(--colour-front);
 }
