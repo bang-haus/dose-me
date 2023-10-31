@@ -98,7 +98,6 @@ const createUpdate = (event) => {
   }
   emit('createUpdate', medication);
 };
-
 </script>
 
 <style scoped>

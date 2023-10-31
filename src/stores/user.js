@@ -1,10 +1,19 @@
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { defineStore } from 'pinia';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut
+} from 'firebase/auth';
 import app from '@/includes/firebase';
+import { useAlertStore } from '@/stores/alert';
 
 export const useUserStore = defineStore('user', () => {
+  const alert = useAlertStore();
+
   const loggedInUser = reactive({ email: '', displayName: '', uid: '' });
   const weekStart = ref('monday');
   const auth = getAuth(app);
@@ -30,27 +39,28 @@ export const useUserStore = defineStore('user', () => {
   });
 
   async function register(values) {
-    // const userCred = await auth.createUserWithEmailAndPassword(values.email, values.password);
-    // await usersCollection.doc(userCred.user.uid).set({
-    //   name: values.name,
-    //   email: values.email
-    // });
-    // await userCred.user.updateProfile({
-    //   displayName: values.name
-    // });
-    // userLoggedIn.value = true;
+    try {
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
+    } catch (error) {
+      console.log(error.message);
+      return { type: 'error', result: error };
+    }
+
+    console.log('tried');
+    return { type: 'success', result: loggedInUser };
   }
 
   async function authenticate(values) {
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
     } catch (error) {
-      console.log(error);
+      console.log(error.code, error.message);
     }
   }
 
   async function logOut() {
     await signOut(auth);
+    alert.set('success', 'Successfully logged out.')
     router.push('/');
   }
 

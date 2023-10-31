@@ -33,11 +33,15 @@ const user = useUserStore();
 <style scoped>
 header {
   background-color: var(--colour-ui);
-}
-
-nav {
+  height: 4rem;
   padding: 1rem;
 }
+
+.wrapper {
+  display: flex;
+}
+
+nav {}
 
 menu {
   display: flex;
@@ -52,7 +56,8 @@ li {}
 a:link,
 a:visited {
   color: var(--colour-back);
-    text-decoration: none;
+  font-weight: 700;
+  text-decoration: none;
 }
 
 .nav__week {

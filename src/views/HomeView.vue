@@ -1,63 +1,110 @@
 <template>
-  <div class="card card--auth" v-if="!user.isLoggedIn">
+  <div class="card">
     <h1>Dose Me 💊</h1>
-    <details open>
-      <summary>
-        <h2>First time here?</h2>
-      </summary>
-      <form @submit.prevent="register">
-        <fieldset>
-          <legend>Register</legend>
-          <label>
-            Email
-            <input type="email" name="email" required>
-          </label>
-          <label>
-            Password
-            <input type="password" name="password" required>
-          </label>
-          <label>
-            Confirm Password
-            <input type="password" name="confirmPassword" required>
-          </label>
-          <button type="submit">Register</button>
-        </fieldset>
-      </form>
-    </details>
-    <details>
-      <summary>
-        <h2>Been here before?</h2>
-      </summary>
-      <form @submit.prevent="logIn">
-        <fieldset>
-          <legend>Login</legend>
-          <label>
-            Email
-            <input type="email" name="email" required>
-          </label>
-          <label>
-            Password
-            <input type="password" name="password" required>
-          </label>
-          <button type="submit">Login</button>
-        </fieldset>
-      </form>
-    </details>
+    <div v-if="!user.isLoggedIn">
+      <details open>
+        <summary>
+          <h2>First time here?</h2>
+        </summary>
+        <form @submit.prevent="register">
+          <fieldset>
+            <legend>Register</legend>
+            <label>
+              Email
+              <input type="email" name="email" required>
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" minlength="6" required>
+            </label>
+            <label>
+              Confirm Password
+              <input type="password" name="confirmPassword" required @keyup="resetValidity">
+            </label>
+            <button type="submit">Register</button>
+          </fieldset>
+        </form>
+      </details>
+      <details>
+        <summary>
+          <h2>Been here before?</h2>
+        </summary>
+        <form @submit.prevent="logIn">
+          <fieldset>
+            <legend>Login</legend>
+            <label>
+              Email
+              <input type="email" name="email" required>
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" required>
+            </label>
+            <button type="submit">Login</button>
+          </fieldset>
+        </form>
+      </details>
+    </div>
+    <div v-else>
+      poop
+    </div>
   </div>
-  <div class="card" v-else></div>
 </template>
 
 <script setup>
 import { useUserStore } from '@/stores/user';
+import { useAlertStore } from '@/stores/alert';
 
 const user = useUserStore();
+const alert = useAlertStore();
 
-function logIn(event) {
+async function logIn(event) {
   const fieldset = event.target.querySelector('fieldset');
   fieldset.setAttribute('disabled', '');
 
-  user.authenticate({ email: event.target.elements.email.value, password: event.target.elements.password.value })
+  const result = await user.authenticate({
+    email: event.target.elements.email.value,
+    password: event.target.elements.password.value
+  });
 
+  if (result.type === 'error') {
+    fieldset.removeAttribute('disabled');
+  }
+}
+
+async function register(event) {
+  const { email, password, confirmPassword } = event.target.elements;
+
+  if (confirmPassword.value !== password.value) {
+    confirmPassword.setCustomValidity('Passwords must match');
+  } else {
+    confirmPassword.setCustomValidity('');
+  }
+
+  confirmPassword.reportValidity();
+
+  if (event.target.checkValidity()) {
+    const fieldset = event.target.querySelector('fieldset');
+    fieldset.setAttribute('disabled', '');
+
+    const response = await user.register({
+      email: email.value,
+      password: password.value
+    });
+
+    let message = 'Successfully registered!';
+
+    if (response.type === 'error') {
+      fieldset.removeAttribute('disabled');
+      message = response.result.message;
+    }
+
+    alert.set(response.type, message);
+  }
+}
+
+function resetValidity(event) {
+  event.target.setCustomValidity('');
 }
 </script>
 
@@ -79,7 +126,7 @@ details {
   color: var(--colour-front);
 }
 
-details + details {
+details+details {
   margin-top: .5rem;
 }
 

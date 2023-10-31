@@ -96,7 +96,7 @@ button {
   border-image-source: var(--gradient);
   color: var(--colour-ui);
   cursor: pointer;
-  font-family:var(--font-body);
+  font-family: var(--font-body);
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1;
@@ -112,4 +112,20 @@ button + button {
   --gradient: var(--gradient-s);
   color: var(--colour-front);
   margin-left: 0.25rem;
+}
+
+.alert {
+  bottom: 1rem;
+  margin: 0 0 0 auto;
+  right: 1rem;
+}
+
+.alert--error {
+  background-color: var(--colour-error);
+  color: var(--colour-back);
+}
+
+.alert--success {
+  background-color: var(--colour-success);
+  color: var(--colour-back);
 }
