@@ -12,12 +12,12 @@ import app from '@/includes/firebase';
 import { useAlertStore } from '@/stores/alert';
 
 export const useUserStore = defineStore('user', () => {
+  const auth = getAuth(app);
+  const router = useRouter();
   const alert = useAlertStore();
 
   const loggedInUser = reactive({ email: '', displayName: '', uid: '' });
   const weekStart = ref('monday');
-  const auth = getAuth(app);
-  const router = useRouter();
 
   onAuthStateChanged(auth, (user) => {
     const appUser = {
@@ -48,7 +48,7 @@ export const useUserStore = defineStore('user', () => {
       return;
     }
 
-    alert('success', 'Successfully registered!');
+    alert.set('success', 'Successfully registered!');
   }
 
   async function authenticate(values) {

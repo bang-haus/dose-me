@@ -3,7 +3,8 @@
     <dialog ref="medicationDialog">
       <h2>Add new medication</h2>
       <form @submit.prevent="createUpdate" ref="medicationForm">
-        <fieldset class="fieldset--medication">
+        <input type="hidden" id="docID" name="docID" value="">
+        <fieldset class="fieldset--medication" :disabled="processing === 'processing'">
           <legend>Medication</legend>
           <label>
             Name
@@ -18,7 +19,7 @@
             <input type="number" id="dose" name="dose" min="1" step="1">
           </label>
         </fieldset>
-        <fieldset>
+        <fieldset :disabled="processing === 'processing'">
           <legend>Period</legend>
           <label>
             <input type="radio" value="am" name="period" required>
@@ -29,7 +30,7 @@
             Afternoon
           </label>
         </fieldset>
-        <fieldset>
+        <fieldset :disabled="processing === 'processing'">
           <legend>Days</legend>
           <label v-for="day in daysMonday" :key="day">
             <input type="checkbox" :id="day" :name="day">
@@ -39,10 +40,10 @@
             {{ toggleDays ? 'Uncheck all days' : 'Check all days' }}
           </button>
         </fieldset>
-        <div>
+        <fieldset :disabled="processing === 'processing'">
           <button type="submit">Add</button>
           <button type="button" @click.prevent="showDialog = false">Cancel</button>
-        </div>
+        </fieldset>
       </form>
     </dialog>
   </teleport>
@@ -51,36 +52,43 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import { daysMonday } from '@/days'
-import { upperFirst } from '@/helpers/strings'
+import { useUserStore } from '@/stores/user';
+import { daysMonday } from '@/days';
+import { upperFirst } from '@/helpers/strings';
 
-const showDialog = ref(false)
-const medicationDialog = ref(null)
+const user = useUserStore();
+
+const showDialog = ref(false);
+const medicationDialog = ref(null);
 watch(showDialog, (newVal) => {
   document.body.style.overflow = newVal ? 'hidden' : 'visible'
 
   if (newVal) {
-    medicationDialog.value.showModal()
+    medicationDialog.value.showModal();
   } else {
-    medicationDialog.value.close()
+    medicationDialog.value.close();
   }
-})
+});
 
-const toggleDays = ref(false)
-const medicationForm = ref(null)
+const toggleDays = ref(false);
+const medicationForm = ref(null);
 watch(toggleDays, (newVal) => {
   for (let element of medicationForm.value.elements) {
     if (element.type === 'checkbox') {
       element.checked = newVal
     }
   }
-})
+});
 
-const emit = defineEmits(['createUpdate'])
+const props = defineProps({
+  processing: String
+});
+
+const emit = defineEmits(['createUpdate']);
 const createUpdate = (event) => {
-  const elements = event.target.elements
+  const elements = event.target.elements;
+  const docID = elements.docID.value;
   const medication = {
-    medicationID: '0000001',
     name: elements.name.value,
     quantity: elements.quantity.value,
     dose: elements.dose.value,
@@ -94,10 +102,20 @@ const createUpdate = (event) => {
       saturday: elements.saturday.checked,
       sunday: elements.sunday.checked
     },
-    sort: 0
-  }
-  emit('createUpdate', medication);
+    sort: 0,
+    uid: user.loggedInUser.uid
+  };
+
+  emit('createUpdate', { medication, docID });
 };
+
+watch(() => props.processing, (newVal) => {
+  if (newVal === 'success') {
+    medicationForm.value.reset();
+    showDialog.value = false;
+  }
+
+});
 </script>
 
 <style scoped>

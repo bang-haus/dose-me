@@ -6,15 +6,17 @@
         <h2>{{ day }}</h2>
         <h3>Morning</h3>
         <ul>
-          <li v-for="medication in store.dayMedications(day, 'am')" :key="medication.medicationID">{{ medication.name }}</li>
+          <li v-for="[key, medication] in dayMedications(day, 'am')" :key="key">{{ medication.name }}
+          </li>
         </ul>
         <h3>Afternoon</h3>
         <ul>
-          <li v-for="medication in store.dayMedications(day, 'pm')" :key="medication.medicationID">{{ medication.name }}</li>
+          <li v-for="[key, medication] in dayMedications(day, 'pm')" :key="key">{{ medication.name }}
+          </li>
         </ul>
       </li>
     </ul>
-    <medication-form @createUpdate="store.createUpdate" />
+    <medication-form @createUpdate="createUpdate" :processing="processing" />
   </div>
 </template>
 
@@ -22,8 +24,34 @@
 import { daysMonday } from '@/days'
 import { useMedicationsStore } from '@/stores/medications'
 import MedicationForm from '@/components/MedicationForm.vue'
+import { ref } from 'vue';
 
-const store = useMedicationsStore();
+const medications = useMedicationsStore();
+const processing = ref('');
+
+const dayMedications = (day, period) => {
+  const dayMeds = new Map();
+
+  medications.medications.forEach((med, key) => {
+    if (med.period === period && med.days[day]) {
+      dayMeds.set(key, med);
+    }
+  });
+
+  return dayMeds;
+};
+
+async function createUpdate(data) {
+  processing.value = 'processing';
+
+  const didCreate = await medications.createUpdate(data);
+
+  if (didCreate) {
+    processing.value = 'success';
+  } else {
+    processing.value = 'error';
+  }
+}
 </script>
 
 <style scoped>
