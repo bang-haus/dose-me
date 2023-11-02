@@ -8,7 +8,8 @@ import {
   onSnapshot,
   doc,
   addDoc,
-  setDoc
+  setDoc,
+  deleteDoc
 } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import app from '@/includes/firebase';
@@ -57,8 +58,8 @@ export const useMedicationsStore = defineStore('medications', () => {
     }
   });
 
-  function getMedication(docid) {
-    return medications.get(docid);
+  function getMedication(docID) {
+    return medications.get(docID);
   }
 
   const dayMedications = (day, period) => {
@@ -98,15 +99,30 @@ export const useMedicationsStore = defineStore('medications', () => {
     return true;
   }
 
+  async function remove(docID) {
+    try {
+      await deleteDoc(doc(db, 'medications', docID));
+    } catch (error) {
+      console.log(error);
+      alert.set('error', error.code);
+
+      return false;
+    }
+
+    alert.set('success', 'Successfully deleted!');
+
+    return true;
+  }
+
   const editing = ref('');
 
-  function edit(docid) {
-    editing.value = docid;
+  function edit(docID) {
+    editing.value = docID;
   }
 
   function unsub() {
     unsubscribe();
   }
 
-  return { editing, edit, medications, getMedication, dayMedications, createUpdate, unsub };
+  return { editing, edit, medications, getMedication, dayMedications, createUpdate, remove, unsub };
 });

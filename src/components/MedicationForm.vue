@@ -37,7 +37,7 @@
         <fieldset :disabled="processing === 'processing'">
           <button type="submit">{{ addOrUpdate }}</button>
           <button type="button" @click.prevent="cancel">Cancel</button>
-          <!--<button v-if="medications.editing">Delete</button>-->
+          <button v-if="medications.editing" @click.prevent="deleteMedication">Delete</button>
         </fieldset>
       </form>
     </dialog>
@@ -75,7 +75,7 @@ const props = defineProps({
   docid: String,
 });
 
-const emit = defineEmits(['createUpdate', 'resetDocid']);
+const emit = defineEmits(['createUpdate', 'deleteMedication', 'resetDocid']);
 
 const createUpdate = (event) => {
   const elements = event.target.elements;
@@ -101,13 +101,17 @@ const createUpdate = (event) => {
   emit('createUpdate', { medication, docID });
 };
 
-watch(() => props.processing, (newVal) => {
-  if (newVal === 'success') {
-    currentMedication.value = null;
-    medicationForm.value.reset();
-    showDialog.value = false;
-  }
-});
+const deleteMedication = () => {
+  emit('deleteMedication', props.docid);
+}
+
+  watch(() => props.processing, (newVal) => {
+    if (newVal === 'success') {
+      currentMedication.value = null;
+      medicationForm.value.reset();
+      showDialog.value = false;
+    }
+  });
 
 const addOrUpdate = computed(() => {
   return props.docid ? 'Update' : 'Add';

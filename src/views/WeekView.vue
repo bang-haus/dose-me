@@ -31,7 +31,8 @@
           </li>
         </ul>
       </li>
-      <medication-form @createUpdate="createUpdate" :processing="processing" :docid="medications.editing" />
+      <medication-form @createUpdate="createUpdate" @deleteMedication="deleteMedication" :processing="processing"
+        :docid="medications.editing" />
     </ul>
   </div>
 </template>
@@ -72,11 +73,15 @@ async function createUpdate(data) {
 
   const didCreate = await medications.createUpdate(data);
 
-  if (didCreate) {
-    processing.value = 'success';
-  } else {
-    processing.value = 'error';
-  }
+  processing.value = didCreate ? 'success' : 'error';
+}
+
+async function deleteMedication(data) {
+  processing.value = 'processing';
+
+  const didDelete = await medications.remove(data);
+
+  processing.value = didDelete ? 'success' : 'error';
 }
 </script>
 
