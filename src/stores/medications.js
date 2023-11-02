@@ -79,6 +79,7 @@ export const useMedicationsStore = defineStore('medications', () => {
       }
 
       alert.set('success', 'Successfully updated!');
+      editing.value = '';
 
       return true;
     }

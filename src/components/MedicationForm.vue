@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
     <dialog ref="medicationDialog">
-      <h2>Add new medication</h2>
+      <h2>{{ addOrUpdate }} medication</h2>
       <form @submit.prevent="createUpdate" ref="medicationForm">
         <input type="hidden" id="docID" name="docID" :value="medications.editing">
         <fieldset class="fieldset--medication" :disabled="processing === 'processing'">
@@ -75,7 +75,7 @@ const props = defineProps({
   docid: String,
 });
 
-const emit = defineEmits(['createUpdate']);
+const emit = defineEmits(['createUpdate', 'resetDocid']);
 
 const createUpdate = (event) => {
   const elements = event.target.elements;
@@ -135,11 +135,34 @@ dialog {
   border: 1px solid;
   border-image-slice: 1;
   border-image-source: linear-gradient(to right, var(--colour-ui), var(--colour-b-mid));
+  bottom: 2rem;
   color: var(--colour-front);
-  left: 25vw;
+  height: calc(100% - 4rem);
+  left: 5vw;
   padding: 0;
-  top: 6rem;
-  width: 50vw;
+  top: 2rem;
+  width: 90vw;
+}
+
+@media (min-width: 768px) {
+  dialog {
+    bottom: auto;
+    height: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  dialog {
+    left: 15vw;
+    width: 70vw;
+  }
+}
+
+@media (min-width: 1440px) {
+  dialog {
+    left: 25vw;
+    width: 50vw;
+  }
 }
 
 dialog::backdrop {
@@ -162,7 +185,19 @@ form {
 }
 
 fieldset {
-  --columns: 1fr 1fr 1fr;
+  --columns: 1fr 1fr;
+}
+
+.fieldset--medication {
+  --columns: 1fr;
+}
+
+@media (min-width: 768px) {
+
+  fieldset,
+  .fieldset--medication {
+    --columns: 1fr 1fr 1fr;
+  }
 }
 
 .fieldset--medication label {

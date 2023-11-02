@@ -7,12 +7,12 @@
           <li class="nav__week">
             <router-link to="/week">Week</router-link>
           </li>
-          <li v-for="name in daysMonday" :key="name" class="nav__day" :class="`nav__day--${name}`">
+          <!--<li v-for="name in daysMonday" :key="name" class="nav__day" :class="`nav__day--${name}`">
             <router-link :to="`/day/${name}`">
               {{ upperFirst(name) }}
             </router-link>
-          </li>
-          <li>
+          </li>-->
+          <li class="nav__logout">
             <a href="#" @click.prevent="user.logOut">Logout</a>
           </li>
         </menu>
@@ -39,9 +39,12 @@ header {
 
 .wrapper {
   display: flex;
+  gap: 1rem;
 }
 
-nav {}
+nav {
+  flex-grow: 2;
+}
 
 menu {
   display: flex;
@@ -51,8 +54,6 @@ menu {
   padding: 0;
 }
 
-li {}
-
 a:link,
 a:visited {
   color: var(--colour-back);
@@ -60,7 +61,7 @@ a:visited {
   text-decoration: none;
 }
 
-.nav__week {
+.nav__logout {
   margin-left: auto;
 }
 </style>

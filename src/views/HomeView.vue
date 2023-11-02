@@ -45,8 +45,8 @@
         </form>
       </details>
     </div>
-    <div v-else>
-      <p>some links</p>
+    <div v-else class="home-links">
+      <router-link to="/week" class="button">Weekly Medication</router-link>
     </div>
   </div>
 </template>
@@ -116,13 +116,46 @@ function exclusiveOpen(event) {
 <style scoped>
 .card {
   margin: 6rem auto;
-  width: 25vw;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  .card {
+    width: 50vw;
+  }
+}
+
+@media (min-width: 1200px) {
+  .card {
+    width: 25vw;
+  }
+}
+
+.home-links {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
 }
 
 h1 {
-  font-size: 4vw;
+  font-size: 10vw;
   text-align: center;
 }
+
+@media (min-width: 768px) {
+  h1 {
+    font-size: 6vw;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1200px) {
+  h1 {
+    font-size: 4vw;
+    text-align: center;
+  }
+}
+
 
 details {
   border: 1px solid;

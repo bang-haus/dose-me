@@ -55,6 +55,7 @@ fieldset:disabled button + button:hover {
 }
 
 legend {
+  align-self: flex-start;
   font-size: 1rem;
   padding: 0 0.5rem;
 }
@@ -100,6 +101,7 @@ input[type='radio']:checked::after {
   content: '☑︎';
 }
 
+.button:link,
 button {
   appearance: none;
   background-color: var(--colour-back);
@@ -113,8 +115,11 @@ button {
   font-weight: 700;
   line-height: 1;
   padding: 0.5rem 1rem;
+  text-align: center;
+  text-decoration: none;
 }
 
+.button:hover,
 button:hover {
   background: var(--gradient);
   color: var(--colour-back);

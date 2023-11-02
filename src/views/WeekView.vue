@@ -7,7 +7,10 @@
         <h3>Morning</h3>
         <ul>
           <li v-for="[key, medication] in dayMedications(day, 'am')" :key="key">
-            {{ medication.name }}
+            <p>
+              {{ medication.name }}
+              <small v-if="quantityDose(key)">{{ quantityDose(key) }}</small>
+            </p>
             <button type="button" @click.prevent="medications.edit(key)">
               <span class="sr-only">Edit {{ medication.name }}</span>
               ✎
@@ -17,7 +20,10 @@
         <h3>Afternoon</h3>
         <ul>
           <li v-for="[key, medication] in dayMedications(day, 'pm')" :key="key">
-            {{ medication.name }}
+            <p>
+              {{ medication.name }}
+              <small v-if="quantityDose(key)">{{ quantityDose(key) }}</small>
+            </p>
             <button type="button" @click.prevent="medications.edit(key)">
               <span class="sr-only">Edit {{ medication.name }}</span>
               ✎
@@ -25,8 +31,8 @@
           </li>
         </ul>
       </li>
+      <medication-form @createUpdate="createUpdate" :processing="processing" :docid="medications.editing" />
     </ul>
-    <medication-form @createUpdate="createUpdate" :processing="processing" :docid="medications.editing" />
   </div>
 </template>
 
@@ -50,6 +56,16 @@ const dayMedications = (day, period) => {
 
   return dayMeds;
 };
+
+function quantityDose(docid) {
+  const med = medications.medications.get(docid);
+
+  if (med && med.quantity && med.dose) {
+    return `(${med.quantity} x ${med.dose}mg)`;
+  }
+
+  return '';
+}
 
 async function createUpdate(data) {
   processing.value = 'processing';
@@ -81,12 +97,38 @@ h3 {
 }
 
 ul {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(7, 1fr);
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+@media (min-width: 768px) {
+  ul {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  ul {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (min-width: 1200px) {
+  ul {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 2560px) {
+  ul {
+    grid-template-columns: repeat(7, 1fr);
+  }
 }
 
 ul>li {
