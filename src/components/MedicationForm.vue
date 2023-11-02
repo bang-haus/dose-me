@@ -37,7 +37,7 @@
         <fieldset :disabled="processing === 'processing'">
           <button type="submit">{{ addOrUpdate }}</button>
           <button type="button" @click.prevent="cancel">Cancel</button>
-          <button v-if="medications.editing">Delete</button>
+          <!--<button v-if="medications.editing">Delete</button>-->
         </fieldset>
       </form>
     </dialog>
