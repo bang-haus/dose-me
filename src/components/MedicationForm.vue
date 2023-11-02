@@ -3,46 +3,41 @@
     <dialog ref="medicationDialog">
       <h2>Add new medication</h2>
       <form @submit.prevent="createUpdate" ref="medicationForm">
-        <input type="hidden" id="docID" name="docID" value="">
+        <input type="hidden" id="docID" name="docID" :value="medications.editing">
         <fieldset class="fieldset--medication" :disabled="processing === 'processing'">
           <legend>Medication</legend>
           <label>
             Name
-            <input type="text" id="name" name="name" required>
+            <input type="text" id="name" name="name" required :value="currentMedication && currentMedication.name">
           </label>
           <label>
             Quantity
-            <input type="number" id="quantity" name="quantity" min="1" step="1">
+            <input type="number" id="quantity" name="quantity" min="1" step="1" :value="currentMedication?.quantity">
           </label>
           <label for="dose">
             Dose (mg)
-            <input type="number" id="dose" name="dose" min="1" step="1">
+            <input type="number" id="dose" name="dose" min="1" step="1" :value="currentMedication?.dose">
           </label>
         </fieldset>
         <fieldset :disabled="processing === 'processing'">
           <legend>Period</legend>
           <label>
-            <input type="radio" value="am" name="period" required>
+            <input type="radio" value="am" name="period" required :checked="currentMedication?.period === 'am'">
             Morning
           </label>
           <label>
-            <input type="radio" value="pm" name="period" required>
+            <input type="radio" value="pm" name="period" required :checked="currentMedication?.period === 'pm'">
             Afternoon
           </label>
         </fieldset>
         <fieldset :disabled="processing === 'processing'">
           <legend>Days</legend>
-          <label v-for="day in daysMonday" :key="day">
-            <input type="checkbox" :id="day" :name="day">
-            {{ upperFirst(day) }}
-          </label>
-          <button type="button" @click.prevent="toggleDays = !toggleDays">
-            {{ toggleDays ? 'Uncheck all days' : 'Check all days' }}
-          </button>
+          <day-checkboxes :meddays="currentMedication?.days" />
         </fieldset>
         <fieldset :disabled="processing === 'processing'">
-          <button type="submit">Add</button>
-          <button type="button" @click.prevent="showDialog = false">Cancel</button>
+          <button type="submit">{{ addOrUpdate }}</button>
+          <button type="button" @click.prevent="cancel">Cancel</button>
+          <button v-if="medications.editing">Delete</button>
         </fieldset>
       </form>
     </dialog>
@@ -51,15 +46,18 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useMedicationsStore } from '@/stores/medications';
 import { useUserStore } from '@/stores/user';
-import { daysMonday } from '@/days';
-import { upperFirst } from '@/helpers/strings';
+import DayCheckboxes from '@/components/DayCheckboxes.vue';
 
+const medications = useMedicationsStore();
 const user = useUserStore();
 
 const showDialog = ref(false);
 const medicationDialog = ref(null);
+const currentMedication = ref(null);
+
 watch(showDialog, (newVal) => {
   document.body.style.overflow = newVal ? 'hidden' : 'visible'
 
@@ -70,21 +68,15 @@ watch(showDialog, (newVal) => {
   }
 });
 
-const toggleDays = ref(false);
 const medicationForm = ref(null);
-watch(toggleDays, (newVal) => {
-  for (let element of medicationForm.value.elements) {
-    if (element.type === 'checkbox') {
-      element.checked = newVal
-    }
-  }
-});
 
 const props = defineProps({
-  processing: String
+  processing: String,
+  docid: String,
 });
 
 const emit = defineEmits(['createUpdate']);
+
 const createUpdate = (event) => {
   const elements = event.target.elements;
   const docID = elements.docID.value;
@@ -111,11 +103,30 @@ const createUpdate = (event) => {
 
 watch(() => props.processing, (newVal) => {
   if (newVal === 'success') {
+    currentMedication.value = null;
     medicationForm.value.reset();
     showDialog.value = false;
   }
-
 });
+
+const addOrUpdate = computed(() => {
+  return props.docid ? 'Update' : 'Add';
+});
+
+watch(() => props.docid, (newDocid) => {
+  if (newDocid) {
+    showDialog.value = true;
+    currentMedication.value = medications.getMedication(newDocid);
+  } else {
+    currentMedication.value = null;
+  }
+});
+
+function cancel() {
+  showDialog.value = false;
+  medicationForm.value.reset();
+  medications.edit('');
+}
 </script>
 
 <style scoped>

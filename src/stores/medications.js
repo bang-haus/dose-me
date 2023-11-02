@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { ref, reactive } from 'vue';
 import { defineStore } from 'pinia';
 import {
   getFirestore,
@@ -57,6 +57,10 @@ export const useMedicationsStore = defineStore('medications', () => {
     }
   });
 
+  function getMedication(docid) {
+    return medications.get(docid);
+  }
+
   const dayMedications = (day, period) => {
     return Array.from(medications).filter(
       (medication) => medication.period === period && medication.days[day]
@@ -93,9 +97,15 @@ export const useMedicationsStore = defineStore('medications', () => {
     return true;
   }
 
+  const editing = ref('');
+
+  function edit(docid) {
+    editing.value = docid;
+  }
+
   function unsub() {
     unsubscribe();
   }
 
-  return { medications, dayMedications, createUpdate, unsub };
+  return { editing, edit, medications, getMedication, dayMedications, createUpdate, unsub };
 });

@@ -36,13 +36,22 @@ fieldset {
 }
 
 fieldset:disabled {
-  border-style: double;
+  opacity: 0.5;
 }
 
 fieldset:disabled button:hover {
   background: var(--colour-back);
   color: var(--colour-ui);
   cursor: progress;
+}
+
+fieldset:disabled input {
+  background-color: var(--colour-back);
+  color: var(--colour-front);
+}
+
+fieldset:disabled button + button:hover {
+  color: var(--colour-front);
 }
 
 legend {
@@ -55,7 +64,9 @@ label {
 }
 
 input {
+  background-color: var(--colour-back);
   border: 1px solid var(--colour-front);
+  color: var(--colour-front);
   font-family: var(--font-body);
   font-size: 1.25rem;
   line-height: 1;
@@ -112,7 +123,6 @@ button:hover {
 button + button {
   --gradient: var(--gradient-s);
   color: var(--colour-front);
-  margin-left: 0.25rem;
 }
 
 .alert {

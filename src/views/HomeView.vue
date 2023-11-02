@@ -2,7 +2,26 @@
   <div class="card">
     <h1>Dose Me 💊</h1>
     <div v-if="!user.isLoggedIn">
-      <details open>
+      <details open @toggle="exclusiveOpen" ref="loginDetails">
+        <summary>
+          <h2>Been here before?</h2>
+        </summary>
+        <form @submit.prevent="logIn">
+          <fieldset>
+            <legend>Login</legend>
+            <label>
+              Email
+              <input type="email" name="email" required>
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" required>
+            </label>
+            <button type="submit">Login</button>
+          </fieldset>
+        </form>
+      </details>
+      <details @toggle="exclusiveOpen" ref="registerDetails">
         <summary>
           <h2>First time here?</h2>
         </summary>
@@ -25,33 +44,15 @@
           </fieldset>
         </form>
       </details>
-      <details>
-        <summary>
-          <h2>Been here before?</h2>
-        </summary>
-        <form @submit.prevent="logIn">
-          <fieldset>
-            <legend>Login</legend>
-            <label>
-              Email
-              <input type="email" name="email" required>
-            </label>
-            <label>
-              Password
-              <input type="password" name="password" required>
-            </label>
-            <button type="submit">Login</button>
-          </fieldset>
-        </form>
-      </details>
     </div>
     <div v-else>
-      poop
+      <p>some links</p>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useUserStore } from '@/stores/user';
 
 const user = useUserStore();
@@ -95,6 +96,21 @@ async function register(event) {
 function resetValidity(event) {
   event.target.setCustomValidity('');
 }
+
+const registerDetails = ref(null);
+const loginDetails = ref(null);
+
+function exclusiveOpen(event) {
+  const details = event.target;
+
+  if (details.open) {
+    if (details === registerDetails.value) {
+      loginDetails.value.removeAttribute('open');
+    } else {
+      registerDetails.value.removeAttribute('open');
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -113,6 +129,7 @@ details {
   border-image-slice: 1;
   border-image-source: var(--gradient);
   color: var(--colour-front);
+  /* height: 0; */
 }
 
 details+details {
